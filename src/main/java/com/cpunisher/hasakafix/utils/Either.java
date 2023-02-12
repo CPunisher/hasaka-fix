@@ -1,5 +1,6 @@
 package com.cpunisher.hasakafix.utils;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class Either<A, B> {
@@ -17,6 +18,18 @@ public class Either<A, B> {
 
     public static <A, B> Either<A, B> second(B second) {
         return new Either<>(null, second);
+    }
+
+    public void ifFirst(Consumer<A> consumer) {
+        if (first != null) {
+            consumer.accept(first);
+        }
+    }
+
+    public void ifSecond(Consumer<B> consumer) {
+        if (second != null) {
+            consumer.accept(second);
+        }
     }
 
     public <T> T fold(Function<A, T> ifFirst, Function<B, T> ifSecond) {
