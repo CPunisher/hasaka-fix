@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+}
+
+group 'com.cpunisher'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+    implementation 'org.jetbrains:annotations:15.0'
+
+    implementation 'com.github.gumtreediff:core:3.0.0'
+    implementation 'com.github.gumtreediff:client:3.0.0'
+    implementation 'com.github.gumtreediff:gen.jdt:3.0.0'
+    implementation 'org.eclipse.jgit:org.eclipse.jgit:6.4.0.202211300538-r'
+    implementation 'org.slf4j:slf4j-simple:1.7.36'
+}
+
+test {
+    useJUnitPlatform()
+}
