@@ -12,7 +12,7 @@ import java.util.StringJoiner;
 
 public class GTAntiUnifier implements IAntiUnifier<Tree> {
     @Override
-    public AUNode antiUnify(Tree before, Tree after) {
+    public String antiUnify(Tree before, Tree after) {
         String left = treeToString(before);
         String right = treeToString(after);
         return unify(left, right);
@@ -39,7 +39,7 @@ public class GTAntiUnifier implements IAntiUnifier<Tree> {
     }
 
     // anti-unification algorithm
-    private AUNode unify(String left, String right) {
+    private String unify(String left, String right) {
         Reader in1 = new StringReader(left);
         Reader in2 = new StringReader(right);
         boolean iterateAll = true;
@@ -56,7 +56,7 @@ public class GTAntiUnifier implements IAntiUnifier<Tree> {
             new InputParser<>(equationSystem).parseHedgeEquation(in1, in2);
             AntiUnifyHole antiUnifier = new AntiUnifyHole(func, equationSystem, DebugLevel.SILENT);
             antiUnifier.antiUnify(iterateAll, System.out);
-            return new AUNode(antiUnifier.getData());
+            return antiUnifier.getData();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

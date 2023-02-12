@@ -39,6 +39,7 @@ public class GTEditorTest {
     @Test
     public void testGetEdits() {
         Set<GTTreeEdit> edits = new GTEditor().getEdits(oldTree, newTree);
+        System.out.println(edits);
         assertEquals(2, edits.size());
     }
 

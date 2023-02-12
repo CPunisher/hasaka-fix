@@ -1,6 +1,5 @@
 package com.cpunisher.hasakafix;
 
-import com.cpunisher.hasakafix.antiunification.AUNode;
 import com.cpunisher.hasakafix.antiunification.GTAntiUnifier;
 import com.cpunisher.hasakafix.edit.parser.GTSourceParser;
 import com.cpunisher.hasakafix.edit.parser.ISourceParser;
@@ -40,7 +39,7 @@ public class GTAntiUnifierTest {
 
     @Test
     public void testAntiUnify() {
-        AUNode auNode = antiUnifier.antiUnify(oldTree.getChild("0.4.3"), newTree.getChild("0.4.3"));
-        System.out.println(auNode.toStringTree());
+        String result = antiUnifier.antiUnify(oldTree.getChild("0.4.3"), newTree.getChild("0.4.3"));
+        System.out.println(result);
     }
 }

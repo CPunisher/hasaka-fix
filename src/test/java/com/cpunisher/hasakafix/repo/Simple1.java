@@ -55,4 +55,6 @@ public class Simple1 {
         "                        METHOD_INVOCATION_RECEIVER [182,186]\n"+
         "                            SimpleName: task [182,186]\n"+
         "                        SimpleName: makeProgress [187,199]";
+
+    public static String AU_RESULT_1 = "Block(#6, ExpressionStatement(MethodInvocation(METHOD_INVOCATION_RECEIVER(SimpleName(_task)), SimpleName(_makeProgress))))";
 }
