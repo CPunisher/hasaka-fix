@@ -3,6 +3,7 @@ package com.cpunisher.hasakafix.antiunification;
 import at.jku.risc.stout.urau.algo.*;
 import at.jku.risc.stout.urau.data.EquationSystem;
 import at.jku.risc.stout.urau.data.InputParser;
+import com.cpunisher.hasakafix.antiunification.bean.AntiUnifyData;
 import com.github.gumtreediff.tree.Tree;
 
 import java.io.Reader;
@@ -12,10 +13,15 @@ import java.util.StringJoiner;
 
 public class GTAntiUnifier implements IAntiUnifier<Tree> {
     @Override
-    public String antiUnify(Tree before, Tree after) {
+    public List<AntiUnifyData> antiUnify(Tree before, Tree after) {
         String left = treeToString(before);
         String right = treeToString(after);
         return unify(left, right);
+    }
+
+    @Override
+    public List<AntiUnifyData> antiUnify(String before, String after) {
+        return unify(before, after);
     }
 
     // TODO abstract string value, array dimenson ...
@@ -39,7 +45,7 @@ public class GTAntiUnifier implements IAntiUnifier<Tree> {
     }
 
     // anti-unification algorithm
-    private String unify(String left, String right) {
+    private List<AntiUnifyData> unify(String left, String right) {
         Reader in1 = new StringReader(left);
         Reader in2 = new StringReader(right);
         boolean iterateAll = true;
@@ -54,9 +60,9 @@ public class GTAntiUnifier implements IAntiUnifier<Tree> {
 
         try {
             new InputParser<>(equationSystem).parseHedgeEquation(in1, in2);
-            AntiUnifyHole antiUnifier = new AntiUnifyHole(func, equationSystem, DebugLevel.SILENT);
+            AntiUnifyHook antiUnifier = new AntiUnifyHook(func, equationSystem, DebugLevel.SILENT);
             antiUnifier.antiUnify(iterateAll, System.out);
-            return antiUnifier.getData();
+            return antiUnifier.getDataList();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
