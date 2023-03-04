@@ -11,22 +11,15 @@ import java.io.StringReader;
 import java.util.List;
 import java.util.StringJoiner;
 
-public class GTAntiUnifier implements IAntiUnifier<Tree> {
+public class GTAntiUnifier implements IAntiUnifier {
     @Override
-    public List<AntiUnifyData> antiUnify(Tree before, Tree after) {
-        String left = treeToString(before);
-        String right = treeToString(after);
+    public List<AntiUnifyData> antiUnify(String left, String right) {
         return unify(left, right);
-    }
-
-    @Override
-    public List<AntiUnifyData> antiUnify(String before, String after) {
-        return unify(before, after);
     }
 
     // TODO abstract string value, array dimenson ...
     // https://github.com/reudismam/Revisar/blob/9d31ddcfa4f6605ab781ff9bba2b90b41743df05/src/main/java/br/ufcg/spg/equation/EquationUtils.java#L118
-    private String treeToString(Tree tree) {
+    public static String treeToString(Tree tree) {
         List<Tree> children = tree.getChildren();
         if (children.isEmpty()) {
             String label = tree.getLabel();

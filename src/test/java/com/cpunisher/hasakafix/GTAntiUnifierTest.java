@@ -39,7 +39,9 @@ public class GTAntiUnifierTest {
 
     @Test
     public void testAntiUnify() {
-        var result = antiUnifier.antiUnify(oldTree.getChild("0.4.3"), newTree.getChild("0.4.3"));
+        String left = GTAntiUnifier.treeToString(oldTree.getChild("0.4.3"));
+        String right = GTAntiUnifier.treeToString(newTree.getChild("0.4.3"));
+        var result = antiUnifier.antiUnify(left, right);
         System.out.println(result);
     }
 }
