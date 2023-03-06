@@ -4,7 +4,8 @@ import picocli.CommandLine;
 
 @CommandLine.Command(name = "hasaka-fix", subcommands = {
         CommandEditFiles.class,
-        CommandConcreteEdits.class
+        CommandConcreteEdits.class,
+        CommandCluster.class
 })
 public class HasakaFix implements Runnable {
     @CommandLine.Spec

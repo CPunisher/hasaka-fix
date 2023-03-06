@@ -12,33 +12,33 @@ import com.cpunisher.hasakafix.utils.IdentityPair;
 
 import java.util.*;
 
-public class GTHierarchicalCalculator implements IClusterCalculator<GTTreeEdit> {
+public class GTHierarchicalCalculator implements IClusterCalculator<IdentityPair<String>> {
     private final IAntiUnifier antiUnifier = new GTAntiUnifier();
-    public List<Cluster<GTTreeEdit>> cluster(List<GTTreeEdit> edits) {
+    public List<Cluster<IdentityPair<String>>> cluster(List<IdentityPair<String>> edits) {
         if (edits.isEmpty()) {
             return List.of();
         }
-        List<GTTreeEdit> workList = new LinkedList<>(edits);
-        List<Cluster<GTTreeEdit>> clusters = new ArrayList<>();
+        List<IdentityPair<String>> workList = new LinkedList<>(edits);
+        List<Cluster<IdentityPair<String>>> clusters = new ArrayList<>();
 
-        GTTreeEdit firstEdit = workList.remove(0);
-        Cluster<GTTreeEdit> last = new Cluster<>(GTAntiUnifier.treeToString(firstEdit.before()), GTAntiUnifier.treeToString(firstEdit.after()), List.of(firstEdit));
+        IdentityPair<String> firstEdit = workList.remove(0);
+        Cluster<IdentityPair<String>> last = new Cluster<>(firstEdit.first, firstEdit.second, List.of(firstEdit));
         clusters.add(last);
         while (!workList.isEmpty()) {
             var target = workList.stream()
                     .map(edit -> cost(last, edit)).min(Comparator.comparingDouble(before -> (before.first.cost + before.second.cost)))
                     .get();
-            List<GTTreeEdit> newEdits = new LinkedList<>(last.getEdits());
+            List<IdentityPair<String>> newEdits = new LinkedList<>(last.getEdits());
             newEdits.add(target.first.edit);
             clusters.add(new Cluster<>(target.first.template, target.second.template, newEdits));
         }
         return clusters;
     }
 
-    public IdentityPair<CostResult> cost(Cluster<GTTreeEdit> cluster, GTTreeEdit edit) {
+    public IdentityPair<CostResult> cost(Cluster<?> cluster, IdentityPair<String> edit) {
         // TODO get min
-        AntiUnifyData before = antiUnifier.antiUnify(cluster.getBeforeTemplate(), GTAntiUnifier.treeToString(edit.before())).get(0);
-        AntiUnifyData after = antiUnifier.antiUnify(cluster.getAfterTemplate(), GTAntiUnifier.treeToString(edit.after())).get(0);
+        AntiUnifyData before = antiUnifier.antiUnify(cluster.getBeforeTemplate(), edit.first).get(0);
+        AntiUnifyData after = antiUnifier.antiUnify(cluster.getAfterTemplate(), edit.second).get(0);
         return new IdentityPair<>(
                 new CostResult(edit, before.template(), metrics(before)),
                 new CostResult(edit, after.template(), metrics(after))
@@ -58,6 +58,6 @@ public class GTHierarchicalCalculator implements IClusterCalculator<GTTreeEdit> 
         return (double) (substitutionCost - placeholder) / size;
     }
 
-    private record CostResult(GTTreeEdit edit, String template, double cost) {
+    private record CostResult(IdentityPair<String> edit, String template, double cost) {
     }
 }
