@@ -50,7 +50,7 @@ public class CommandConcreteEdits implements Runnable {
                 throw new RuntimeException(e);
             }
 
-            List<Set<IdentityPair<String>>> result = new ArrayList<>();
+            List<IdentityPair<String>> result = new ArrayList<>();
             for (var pair : editFile) {
                 Tree before = parser.parse(pair.first.content());
                 Tree after = parser.parse(pair.second.content());
@@ -58,7 +58,7 @@ public class CommandConcreteEdits implements Runnable {
                         .stream()
                         .map(edit -> new IdentityPair<>(GTAntiUnifier.treeToString(edit.before()), GTAntiUnifier.treeToString(edit.after())))
                         .collect(Collectors.toSet());
-                result.add(edits);
+                result.addAll(edits);
             }
 
             try {
