@@ -1,6 +1,7 @@
 package com.cpunisher.hasakafix;
 
 import com.cpunisher.hasakafix.bean.EditFile;
+import com.cpunisher.hasakafix.git.GitHelper;
 import com.cpunisher.hasakafix.utils.IdentityPair;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.jupiter.api.BeforeAll;
@@ -51,7 +52,10 @@ public class GitHelperTest {
     public void testGetEditFiles() {
         RevCommit commit = gitHelper.getCommits().iterator().next();
 
-        List<IdentityPair<EditFile>> files = gitHelper.getEditFiles(commit);
+        List<IdentityPair<EditFile>> files = gitHelper.getEditFiles(commit)
+                .stream()
+                .map(record -> record.toEditFiles(gitHelper))
+                .toList();
         assertEquals(1, files.size());
 
         IdentityPair<EditFile> pair = files.get(0);

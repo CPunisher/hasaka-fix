@@ -20,6 +20,8 @@ dependencies {
     implementation 'com.github.gumtreediff:gen.jdt:3.0.0'
     implementation 'org.eclipse.jgit:org.eclipse.jgit:6.4.0.202211300538-r'
     implementation 'org.slf4j:slf4j-simple:1.7.36'
+    implementation 'info.picocli:picocli:4.7.1'
+    implementation 'com.google.code.gson:gson:2.10.1'
 }
 
 test {
