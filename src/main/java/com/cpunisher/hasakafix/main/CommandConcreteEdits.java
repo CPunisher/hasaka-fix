@@ -41,6 +41,7 @@ public class CommandConcreteEdits implements Runnable {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         Type jsonType = new TypeToken<List<IdentityPair<EditFile>>>() {
         }.getType();
+        int total = editFiles.size(), finish = 0;
         for (File file : editFiles) {
             List<IdentityPair<EditFile>> editFile;
             try {
@@ -68,6 +69,7 @@ public class CommandConcreteEdits implements Runnable {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            System.out.printf("[%d/%d] Finish file %s\n", ++finish, total, file.getName());
         }
     }
 }

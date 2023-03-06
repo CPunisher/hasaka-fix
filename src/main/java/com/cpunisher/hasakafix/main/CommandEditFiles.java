@@ -75,6 +75,7 @@ public class CommandEditFiles implements Runnable {
                         );
 
                 int total = editFiles.size(), finish = 0;
+                Files.createDirectories(outputDir.toPath());
                 System.out.printf("Find %d commits\n", total);
                 for (var entry : editFiles.entrySet()) {
                     Files.writeString(outputDir.toPath().resolve(entry.getKey() + ".json"), gson.toJson(entry.getValue()));
