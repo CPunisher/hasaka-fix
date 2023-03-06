@@ -25,7 +25,7 @@ import java.lang.reflect.Type;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@CommandLine.Command(name = "concrete-edits")
+@CommandLine.Command(name = "concrete-edits", description = "Get concrete edits of changes of git commits")
 public class CommandConcreteEdits implements Runnable {
     @CommandLine.Parameters(paramLabel = "<edit-file>")
     List<File> editFiles = new ArrayList<>();

@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-@CommandLine.Command(name = "edit-files")
+@CommandLine.Command(name = "edit-files", description = "Extract git commits which are probably used to fix bugs")
 public class CommandEditFiles implements Runnable {
     @CommandLine.Parameters(paramLabel = "<repos>")
     List<File> repos = new ArrayList<>();

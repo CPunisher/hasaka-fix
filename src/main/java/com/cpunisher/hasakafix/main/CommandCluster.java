@@ -15,7 +15,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-@CommandLine.Command(name = "cluster")
+@CommandLine.Command(name = "cluster", description = "Cluster concrete edits to get fix pattern")
 public class CommandCluster implements Runnable {
     @CommandLine.Parameters(paramLabel = "<files>")
     List<File> files = new ArrayList<>();
