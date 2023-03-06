@@ -54,6 +54,7 @@ public class CommandEditFiles implements Runnable {
 
     @Override
     public void run() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         for (File repo : repos) {
             File repoGit = repo.toPath().resolve(".git").toFile();
             try {
@@ -75,7 +76,6 @@ public class CommandEditFiles implements Runnable {
 
                 int total = editFiles.size(), finish = 0;
                 System.out.printf("Find %d commits\n", total);
-                Gson gson = new GsonBuilder().setPrettyPrinting().create();
                 for (var entry : editFiles.entrySet()) {
                     Files.writeString(outputDir.toPath().resolve(entry.getKey() + ".json"), gson.toJson(entry.getValue()));
                     System.out.printf("[%d/%d] Finish commit %s\n", ++finish, total, entry.getKey());
