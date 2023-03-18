@@ -3,30 +3,20 @@ package com.cpunisher.hasakafix.bean;
 import java.util.List;
 
 public class Cluster<T> {
-    private String beforeTemplate;
-    private String afterTemplate;
+    private T pattern;
     private List<T> edits;
 
-    public Cluster(String beforeTemplate, String afterTemplate, List<T> edits) {
-        this.beforeTemplate = beforeTemplate;
-        this.afterTemplate = afterTemplate;
+    public Cluster(T pattern, List<T> edits) {
+        this.pattern = pattern;
         this.edits = edits;
     }
 
-    public String getBeforeTemplate() {
-        return beforeTemplate;
+    public T getPattern() {
+        return pattern;
     }
 
-    public void setBeforeTemplate(String beforeTemplate) {
-        this.beforeTemplate = beforeTemplate;
-    }
-
-    public String getAfterTemplate() {
-        return afterTemplate;
-    }
-
-    public void setAfterTemplate(String afterTemplate) {
-        this.afterTemplate = afterTemplate;
+    public void setPattern(T pattern) {
+        this.pattern = pattern;
     }
 
     public List<T> getEdits() {

@@ -11,7 +11,7 @@ import static com.cpunisher.hasakafix.tree.AUToken.tokenNames;
 
 public class AUTreeParser {
 
-    private AUTokenizer tokenizer;
+    private final AUTokenizer tokenizer;
 
     public AUTreeParser(AUTokenizer tokenizer) {
         this.tokenizer = tokenizer;
@@ -45,17 +45,17 @@ public class AUTreeParser {
             } while (eatIf(AUToken.COMMAS));
         }
         AUToken rParen = expect(AUToken.RPAREN);
-        return new AUTree(new IdentityPair<>(label.pos().first, rParen.pos().second), label.value(), "", children);
+        return new AUTree(label.value(), "", children);
     }
 
     private Either<AUTree, AUHole> parseVariable() {
         AUToken token = tokenizer.next();
         switch (token.type()) {
             case AUToken.HEDGE_VARIABLE, AUToken.TERM_VARIABLE, AUToken.CONSTANT_VARIABLE -> {
-                return Either.first(new AUTree(token.pos(), "", token.value(), Collections.emptyList()));
+                return Either.first(new AUTree( "", token.value(), Collections.emptyList()));
             }
             case AUToken.HOLE -> {
-                return Either.second(new AUHole(token.pos(), token.value()));
+                return Either.second(new AUHole(token.value()));
             }
         }
         throw new IllegalStateException("Unexpected token " + tokenNames[token.type()]);

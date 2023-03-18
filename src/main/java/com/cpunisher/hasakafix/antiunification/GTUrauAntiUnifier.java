@@ -11,9 +11,9 @@ import java.io.StringReader;
 import java.util.List;
 import java.util.StringJoiner;
 
-public class GTAntiUnifier implements IAntiUnifier {
+public class GTUrauAntiUnifier implements IAntiUnifier<String> {
     @Override
-    public List<AntiUnifyData> antiUnify(String left, String right) {
+    public List<AntiUnifyData<String>> antiUnify(String left, String right) {
         return unify(left, right);
     }
 
@@ -38,7 +38,7 @@ public class GTAntiUnifier implements IAntiUnifier {
     }
 
     // anti-unification algorithm
-    private List<AntiUnifyData> unify(String left, String right) {
+    private List<AntiUnifyData<String>> unify(String left, String right) {
         Reader in1 = new StringReader(left);
         Reader in2 = new StringReader(right);
         boolean iterateAll = true;

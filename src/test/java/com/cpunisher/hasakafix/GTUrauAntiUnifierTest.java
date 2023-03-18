@@ -1,33 +1,34 @@
 package com.cpunisher.hasakafix;
 
-import com.cpunisher.hasakafix.antiunification.GTAntiUnifier;
+import com.cpunisher.hasakafix.antiunification.GTUrauAntiUnifier;
 import com.cpunisher.hasakafix.edit.parser.GTSourceParser;
 import com.cpunisher.hasakafix.edit.parser.ISourceParser;
 import com.cpunisher.hasakafix.repo.Simple1;
 import com.github.gumtreediff.tree.Tree;
+import com.github.gumtreediff.tree.TreeContext;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class GTAntiUnifierTest {
+public class GTUrauAntiUnifierTest {
 
-    private static GTAntiUnifier antiUnifier;
+    private static GTUrauAntiUnifier antiUnifier;
     private static Tree oldTree;
     private static Tree newTree;
 
     @BeforeAll
     public static void init() {
-        antiUnifier = new GTAntiUnifier();
-        ISourceParser<Tree> parser = new GTSourceParser(".java");
-        oldTree = parser.parse(Simple1.OLD_WORKER_DOT_JAVA);
-        newTree = parser.parse(Simple1.NEW_WORKER_DOT_JAVA);
+        antiUnifier = new GTUrauAntiUnifier();
+        ISourceParser<TreeContext> parser = new GTSourceParser(".java");
+        oldTree = parser.parse(Simple1.OLD_WORKER_DOT_JAVA).getRoot();
+        newTree = parser.parse(Simple1.NEW_WORKER_DOT_JAVA).getRoot();
     }
 
     @Test
     public void testTreeToString() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Method target = GTAntiUnifier.class.getDeclaredMethod("treeToString", Tree.class);
+        Method target = GTUrauAntiUnifier.class.getDeclaredMethod("treeToString", Tree.class);
         target.setAccessible(true);
 
         String result1 = (String) target.invoke(antiUnifier, oldTree);
@@ -39,8 +40,8 @@ public class GTAntiUnifierTest {
 
     @Test
     public void testAntiUnify() {
-        String left = GTAntiUnifier.treeToString(oldTree.getChild("0.4.3"));
-        String right = GTAntiUnifier.treeToString(newTree.getChild("0.4.3"));
+        String left = GTUrauAntiUnifier.treeToString(oldTree.getChild("0.4.3"));
+        String right = GTUrauAntiUnifier.treeToString(newTree.getChild("0.4.3"));
         var result = antiUnifier.antiUnify(left, right);
         System.out.println(result);
     }

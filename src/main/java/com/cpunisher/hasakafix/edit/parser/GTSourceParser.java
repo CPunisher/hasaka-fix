@@ -6,7 +6,6 @@ import com.github.gumtreediff.gen.TreeGenerators;
 import com.github.gumtreediff.tree.Tree;
 import com.github.gumtreediff.tree.TreeContext;
 
-import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 
 public class GTSourceParser implements ISourceParser<Tree> {
@@ -27,7 +26,6 @@ public class GTSourceParser implements ISourceParser<Tree> {
     }
 
     @Override
-    @Nullable
     public Tree parse(String source) {
         try {
             TreeContext context  = generator.generateFrom().string(source);

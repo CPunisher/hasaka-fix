@@ -12,7 +12,7 @@ import java.util.List;
 
 public class AntiUnifyHook extends AntiUnify {
 
-    private List<AntiUnifyData> dataList = new ArrayList<>();
+    private List<AntiUnifyData<String>> dataList = new ArrayList<>();
 
     public AntiUnifyHook(RigidityFnc rigidFnc, EquationSystem<AntiUnifyProblem> eq, DebugLevel debugLevel) {
         super(rigidFnc, eq, debugLevel);
@@ -21,11 +21,11 @@ public class AntiUnifyHook extends AntiUnify {
     @Override
     public void callback(AntiUnifySystem result, Variable generalizationVar) {
         TermNode hedge = result.getSigma().get(generalizationVar);
-        List<AntiUnifySubstitution> list = result.getStore().stream().map(problem -> new AntiUnifySubstitution(problem.toString(), problem.getLeft().toString(), problem.getRight().toString())).toList();
-        dataList.add(new AntiUnifyData(hedge.toString(), list));
+        List<AntiUnifySubstitution<String>> list = result.getStore().stream().map(problem -> new AntiUnifySubstitution<>(problem.toString(), problem.getLeft().toString(), problem.getRight().toString())).toList();
+        dataList.add(new AntiUnifyData<String>(hedge.toString(), list));
     }
 
-    public List<AntiUnifyData> getDataList() {
+    public List<AntiUnifyData<String>> getDataList() {
         return dataList;
     }
 }

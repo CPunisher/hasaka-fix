@@ -4,6 +4,6 @@ import com.cpunisher.hasakafix.antiunification.bean.AntiUnifyData;
 
 import java.util.List;
 
-public interface IAntiUnifier {
-    List<AntiUnifyData> antiUnify(String before, String after);
+public interface IAntiUnifier<T> {
+    List<AntiUnifyData<T>> antiUnify(T left, T right);
 }

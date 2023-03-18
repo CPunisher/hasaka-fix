@@ -7,7 +7,7 @@ import com.cpunisher.hasakafix.utils.Either;
 public class DCapCalculator {
     public static void dcap(AUTree tree, int d) {
         if (d == 1) {
-            tree.children().replaceAll(child -> Either.second(new AUHole(child.fold(AUTree::pos, AUHole::pos), "#")));
+            tree.children().replaceAll(child -> Either.second(new AUHole("#")));
             return;
         }
         for (Either<AUTree, AUHole> child : tree.children()) {

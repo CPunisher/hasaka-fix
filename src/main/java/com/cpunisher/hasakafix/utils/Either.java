@@ -32,10 +32,26 @@ public class Either<A, B> {
         }
     }
 
+    public boolean isFirst() {
+        return first != null;
+    }
+
+    public boolean isSecond() {
+        return second != null;
+    }
+
     public <T> T fold(Function<A, T> ifFirst, Function<B, T> ifSecond) {
         if (this.first != null) return ifFirst.apply(this.first);
         if (this.second != null) return ifSecond.apply(this.second);
         throw new IllegalStateException("Either first and second is null");
+    }
+
+    public A getFirst() {
+        return first;
+    }
+
+    public B getSecond() {
+        return second;
     }
 
     @Override
