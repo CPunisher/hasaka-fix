@@ -11,6 +11,7 @@ import com.github.gumtreediff.io.TreeIoUtils;
 import com.github.gumtreediff.matchers.Matcher;
 import com.github.gumtreediff.matchers.Matchers;
 import com.github.gumtreediff.tree.Tree;
+import com.github.gumtreediff.utils.Pair;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import picocli.CommandLine;
@@ -55,33 +56,41 @@ public class CommandCluster implements Runnable {
         }
 
         IClusterCalculator<GTTreeEdit> cc = new GTHierarchicalCalculator(new PlainAntiUnifier2());
-        List<Cluster<GTTreeEdit>> result = cc.cluster(edits);
+        Cluster<GTTreeEdit> rootCluster = cc.cluster(edits);
+        SimpleNode rootNode = new SimpleNode("", new ArrayList<>());
 
-        Map<GTTreeEdit, UUID> idMap = new HashMap<>();
-        for (Cluster<GTTreeEdit> cluster : result) {
+        Queue<Pair<Cluster<GTTreeEdit>, SimpleNode>> queue = new LinkedList<>();
+        queue.add(new Pair<>(rootCluster, rootNode));
+        while (!queue.isEmpty()) {
+            var pair = queue.remove();
+            Cluster<GTTreeEdit> cluster = pair.first;
+            SimpleNode node = pair.second;
+
             UUID uuid = UUID.randomUUID();
-            idMap.put(cluster.getPattern(), uuid);
+            node.id(uuid.toString());
+
+            // Write file
             Path dir = output.toPath().resolve(uuid.toString());
             try {
                 Files.createDirectories(dir);
                 Path before = dir.resolve("before.xml");
                 Path after = dir.resolve("after.xml");
-                TreeIoUtils.toXml(XmlHelper.toTreeContext(cluster.getPattern().before())).writeTo(before.toFile());
-                TreeIoUtils.toXml(XmlHelper.toTreeContext(cluster.getPattern().after())).writeTo(after.toFile());
+                TreeIoUtils.toXml(XmlHelper.toTreeContext(cluster.pattern().before())).writeTo(before.toFile());
+                TreeIoUtils.toXml(XmlHelper.toTreeContext(cluster.pattern().after())).writeTo(after.toFile());
             } catch (Exception e) {
                 throw new RuntimeException(e);
+            }
+
+            for (var child : cluster.children()) {
+                SimpleNode childNode = new SimpleNode("", new ArrayList<>());
+                node.children().add(childNode);
+                queue.add(new Pair<>(child, childNode));
             }
         }
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        SimpleNode root = new SimpleNode(idMap.get(result.get(result.size() - 1).getPattern()).toString(), new ArrayList<>());
-        SimpleNode current = root;
-        for (int i = result.size() - 2; i >= 0; i--) {
-            current.children().add(new SimpleNode(idMap.get(result.get(i).getPattern()).toString(), new ArrayList<>()));
-            current = current.children().get(0);
-        }
         try {
-            Files.writeString(output.toPath().resolve("tree.json"), gson.toJson(root));
+            Files.writeString(output.toPath().resolve("tree.json"), gson.toJson(rootNode));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

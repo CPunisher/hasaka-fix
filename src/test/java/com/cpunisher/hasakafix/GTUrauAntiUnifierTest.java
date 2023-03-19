@@ -21,9 +21,9 @@ public class GTUrauAntiUnifierTest {
     @BeforeAll
     public static void init() {
         antiUnifier = new GTUrauAntiUnifier();
-        ISourceParser<TreeContext> parser = new GTSourceParser(".java");
-        oldTree = parser.parse(Simple1.OLD_WORKER_DOT_JAVA).getRoot();
-        newTree = parser.parse(Simple1.NEW_WORKER_DOT_JAVA).getRoot();
+        ISourceParser<Tree> parser = new GTSourceParser(".java");
+        oldTree = parser.parse(Simple1.OLD_WORKER_DOT_JAVA);
+        newTree = parser.parse(Simple1.NEW_WORKER_DOT_JAVA);
     }
 
     @Test

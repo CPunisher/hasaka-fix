@@ -10,7 +10,6 @@ import com.github.gumtreediff.actions.model.Action;
 import com.github.gumtreediff.matchers.MappingStore;
 import com.github.gumtreediff.matchers.Matchers;
 import com.github.gumtreediff.tree.Tree;
-import com.github.gumtreediff.tree.TreeContext;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -31,9 +30,9 @@ public class GTEditorTest {
 
     @BeforeAll
     public static void init() {
-        ISourceParser<TreeContext> parser = new GTSourceParser(".java");
-        oldTree = Objects.requireNonNull(parser.parse(Simple1.OLD_WORKER_DOT_JAVA)).getRoot();
-        newTree = Objects.requireNonNull(parser.parse(Simple1.NEW_WORKER_DOT_JAVA)).getRoot();
+        ISourceParser<Tree> parser = new GTSourceParser(".java");
+        oldTree = Objects.requireNonNull(parser.parse(Simple1.OLD_WORKER_DOT_JAVA));
+        newTree = Objects.requireNonNull(parser.parse(Simple1.NEW_WORKER_DOT_JAVA));
         mappings = Matchers.getInstance().getMatcher().match(oldTree, newTree);
         editorInner = new GTEditor.GTEditorInner(oldTree, newTree);
     }

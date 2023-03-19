@@ -18,44 +18,57 @@ public class GTHierarchicalCalculator implements IClusterCalculator<GTTreeEdit> 
         this.antiUnifier = new GTPlainAntiUnifier(antiUnifier);
     }
 
-    public List<Cluster<GTTreeEdit>> cluster(List<GTTreeEdit> edits) {
+    public Cluster<GTTreeEdit> cluster(List<GTTreeEdit> edits) {
         if (edits.isEmpty()) {
-            return List.of();
+            return null;
         }
-        List<GTTreeEdit> workList = new LinkedList<>(edits);
-        List<Cluster<GTTreeEdit>> clusters = new ArrayList<>();
+        List<Cluster<GTTreeEdit>> workList = new LinkedList<>(edits.stream().map(edit -> new Cluster<>(edit, Collections.emptyList())).toList());
+        Stack<Cluster<GTTreeEdit>> stack = new Stack<>();
 
-        GTTreeEdit firstEdit = workList.remove(0);
-        Cluster<GTTreeEdit> last = new Cluster<>(firstEdit, List.of(firstEdit));
-        clusters.add(last);
         int total = edits.size(), finish = 1;
-        while (!workList.isEmpty()) {
-            // Calculate min cost
-            CostResult target = null;
-            for (GTTreeEdit edit : workList) {
-                CostResult result = cost(last, edit);
-                if (target == null || result.dist < target.dist) {
-                    target = result;
+        while (workList.size() > 1) {
+            if (stack.isEmpty()) {
+                int randomCluster = (int) (Math.random() * workList.size());
+                stack.push(workList.get(randomCluster));
+                continue;
+            }
+
+            Cluster<GTTreeEdit> peek = stack.peek();
+
+            GTTreeEdit result = null;
+            double minDist = Double.MAX_VALUE;
+            int minIndex = -1;
+            for (int i = 0; i < workList.size(); i++) {
+                Cluster<GTTreeEdit> cluster = workList.get(i);
+                if (peek == cluster) continue;
+                CostResult cost = cost(peek, cluster);
+                if (cost.dist < minDist) {
+                    result = cost.pattern;
+                    minDist = cost.dist;
+                    minIndex = i;
                 }
             }
-            workList.remove(target.merged);
 
-            // Append to clusters
-            List<GTTreeEdit> newEdits = new LinkedList<>(last.getEdits());
-            newEdits.add(target.merged);
-            last = new Cluster<>(target.pattern, newEdits);
-            clusters.add(last);
-            System.out.printf("[%d/%d] Cluster edit\n", ++finish, total);
+            Cluster<GTTreeEdit> target = workList.get(minIndex);
+            if (stack.size() > 1 && stack.get(stack.size() - 2) == target) {
+                var cluster1 = stack.pop();
+                var cluster2 = stack.pop();
+                workList.remove(cluster1);
+                workList.remove(cluster2);
+                workList.add(new Cluster<>(result, List.of(cluster1, cluster2)));
+                System.out.printf("[%d/%d] Cluster edit\n", ++finish, total);
+            } else {
+                stack.push(target);
+            }
         }
-        return clusters;
+        return workList.get(0);
     }
 
-    public CostResult cost(Cluster<GTTreeEdit> cluster, GTTreeEdit edit) {
-        // TODO get min
-        GTPlainAntiUnifier.GTAntiUnifierData result = antiUnifier.antiUnify(cluster.getPattern(), edit);
+    public CostResult cost(Cluster<GTTreeEdit> cluster1, Cluster<GTTreeEdit> cluster2) {
+        GTPlainAntiUnifier.GTAntiUnifierData result = antiUnifier.antiUnify(cluster1.pattern(), cluster2.pattern());
         AntiUnifyData<Tree> beforeResult = new AntiUnifyData<>(result.template().before(), result.beforeSubs());
         AntiUnifyData<Tree> afterResult = new AntiUnifyData<>(result.template().after(), result.afterSubs());
-        return new CostResult(result.template(), edit, metrics(beforeResult) + metrics(afterResult));
+        return new CostResult(result.template(), metrics(beforeResult) + metrics(afterResult));
     }
 
     private double metrics(AntiUnifyData<Tree> result) {
@@ -80,7 +93,7 @@ public class GTHierarchicalCalculator implements IClusterCalculator<GTTreeEdit> 
         return metrics;
     }
 
-    private record CostResult(GTTreeEdit pattern, GTTreeEdit merged, double dist) {}
+    public record CostResult(GTTreeEdit pattern, double dist) {}
 
     private record AntiUnificationMetrics(int size, int leftSize) {}
 

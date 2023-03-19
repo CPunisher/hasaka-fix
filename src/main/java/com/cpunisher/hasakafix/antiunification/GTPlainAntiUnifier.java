@@ -82,8 +82,8 @@ public class GTPlainAntiUnifier {
             }
 
             Tree newTree = new DefaultTree(origin.getType(), origin.getLabel());
-            boolean hasModified = origin.getChildren().stream().anyMatch(modified::contains);
-            if (hasModified) {
+            boolean allModified = modified.containsAll(origin.getChildren());
+            if (!allModified) {
                 for (var child : origin.getChildren()) {
                     if (modified.contains(child)) {
                         newTree.addChild(child.deepCopy());

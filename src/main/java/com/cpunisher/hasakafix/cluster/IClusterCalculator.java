@@ -5,5 +5,5 @@ import com.cpunisher.hasakafix.bean.Cluster;
 import java.util.List;
 
 public interface IClusterCalculator<T> {
-    List<Cluster<T>> cluster(List<T> edits);
+    Cluster<T> cluster(List<T> edits);
 }
