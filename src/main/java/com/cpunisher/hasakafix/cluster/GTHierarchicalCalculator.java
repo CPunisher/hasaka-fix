@@ -8,11 +8,15 @@ import com.cpunisher.hasakafix.bean.Cluster;
 import com.cpunisher.hasakafix.edit.editor.gumtree.GTTreeEdit;
 import com.github.gumtreediff.tree.Tree;
 import com.github.gumtreediff.tree.TreeVisitor;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 
 import java.util.*;
 
 public class GTHierarchicalCalculator implements IClusterCalculator<GTTreeEdit> {
     private final GTPlainAntiUnifier antiUnifier;
+//    private final Map<Cluster<GTTreeEdit>, Map<Cluster<GTTreeEdit>, CostResult>> distanceMatrix = new HashMap<>();
+    private final Table<Cluster<GTTreeEdit>, Cluster<GTTreeEdit>, CostResult> distanceMatrix = HashBasedTable.create();
 
     public GTHierarchicalCalculator(IAntiUnifier<Tree> antiUnifier) {
         this.antiUnifier = new GTPlainAntiUnifier(antiUnifier);
@@ -41,7 +45,13 @@ public class GTHierarchicalCalculator implements IClusterCalculator<GTTreeEdit> 
             for (int i = 0; i < workList.size(); i++) {
                 Cluster<GTTreeEdit> cluster = workList.get(i);
                 if (peek == cluster) continue;
-                CostResult cost = cost(peek, cluster);
+
+                CostResult cost = distanceMatrix.get(peek, cluster);
+                if (cost == null) {
+                    cost = cost(peek, cluster);
+                    distanceMatrix.put(peek, cluster, cost);
+                    distanceMatrix.put(cluster, peek, cost);
+                }
                 if (cost.dist < minDist) {
                     result = cost.pattern;
                     minDist = cost.dist;
@@ -55,6 +65,10 @@ public class GTHierarchicalCalculator implements IClusterCalculator<GTTreeEdit> 
                 var cluster2 = stack.pop();
                 workList.remove(cluster1);
                 workList.remove(cluster2);
+                distanceMatrix.row(cluster1).clear();
+                distanceMatrix.row(cluster2).clear();
+                distanceMatrix.column(cluster1).clear();
+                distanceMatrix.column(cluster2).clear();
                 workList.add(new Cluster<>(result, List.of(cluster1, cluster2)));
                 System.out.printf("[%d/%d] Cluster edit\n", ++finish, total);
             } else {
