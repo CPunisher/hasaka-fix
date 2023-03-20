@@ -22,12 +22,13 @@ dependencies {
 
     implementation 'com.github.gumtreediff:core:3.0.0'
     implementation 'com.github.gumtreediff:client:3.0.0'
-    implementation 'com.github.gumtreediff:gen.jdt:3.0.0'
+    implementation 'org.eclipse.jdt:org.eclipse.jdt.core:3.26.0'
     implementation 'org.eclipse.jgit:org.eclipse.jgit:6.4.0.202211300538-r'
     implementation 'org.slf4j:slf4j-simple:1.7.36'
     implementation 'info.picocli:picocli:4.7.1'
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'fr.inria.gforge.spoon.labs:gumtree-spoon-ast-diff:1.59'
 }
 
 test {
