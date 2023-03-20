@@ -34,8 +34,8 @@ public class GTPlainAntiUnifier {
         // populate back, TODO optimize
         Set<Tree> leftUnmodified = new HashSet<>(left.before().getChildren());
         Set<Tree> rightUnmodified = new HashSet<>(right.after().getChildren());
-        leftUnmodified.removeAll(leftHelper.modified);
-        rightUnmodified.removeAll(rightHelper.modified);
+        leftUnmodified.removeAll(leftHelper.edit.modified());
+        rightUnmodified.removeAll(rightHelper.edit.modified());
         for (var iter = leftUnmodified.iterator(); iter.hasNext();) {
             Tree lc = iter.next();
             for (var iter2 = rightUnmodified.iterator(); iter2.hasNext();) {
@@ -64,15 +64,19 @@ public class GTPlainAntiUnifier {
     }
 
     public static class GTTreeMappingHelper {
-        private final Set<Tree> modified = new HashSet<>();
+        private final GTTreeEdit edit;
 
         private GTTreeMappingHelper(GTTreeEdit edit) {
-            EditScriptGenerator editScriptGenerator = new SimplifiedChawatheScriptGenerator();
-            EditScript editScript = editScriptGenerator.computeActions(edit.mappings());
-            for (Action action : editScript.asList()) {
-                modified.add(action.getNode());
-                if (edit.mappings().isSrcMapped(action.getNode())) modified.add(edit.mappings().getDstForSrc(action.getNode()));
-                if (edit.mappings().isDstMapped(action.getNode())) modified.add(edit.mappings().getSrcForDst(action.getNode()));
+            this.edit = edit;
+            if (edit.modified() == null) {
+                edit.modified(new HashSet<>());
+                EditScriptGenerator editScriptGenerator = new SimplifiedChawatheScriptGenerator();
+                EditScript editScript = editScriptGenerator.computeActions(edit.mappings());
+                for (Action action : editScript.asList()) {
+                    edit.modified().add(action.getNode());
+                    if (edit.mappings().isSrcMapped(action.getNode())) edit.modified().add(edit.mappings().getDstForSrc(action.getNode()));
+                    if (edit.mappings().isDstMapped(action.getNode())) edit.modified().add(edit.mappings().getSrcForDst(action.getNode()));
+                }
             }
         }
 
@@ -82,10 +86,10 @@ public class GTPlainAntiUnifier {
             }
 
             Tree newTree = new DefaultTree(origin.getType(), origin.getLabel());
-            boolean allModified = modified.containsAll(origin.getChildren());
+            boolean allModified = edit.modified().containsAll(origin.getChildren());
             if (!allModified) {
                 for (var child : origin.getChildren()) {
-                    if (modified.contains(child)) {
+                    if (edit.modified().contains(child)) {
                         newTree.addChild(child.deepCopy());
                     }
                 }
