@@ -66,7 +66,7 @@ public class CommandEditFiles implements Runnable {
                         .map(gitHelper::getEditFiles)
                         .filter(this::commitContainTestPredicate)
                         .flatMap(records -> records.stream()
-                                .filter(record -> record.changedLineCount() <= 2)
+                                .filter(record -> record.changedLineCountA()  + record.changedLineCountB() <= 4)
                                 .filter(record -> !isTest(record.before().filepath()) && !isTest(record.after().filepath()))
                         )
                         .collect(Collectors.groupingBy(

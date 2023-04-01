@@ -1,6 +1,7 @@
 package com.cpunisher.hasakafix;
 
 import com.cpunisher.hasakafix.bean.EditFile;
+import com.cpunisher.hasakafix.git.GitDiffFileRecord;
 import com.cpunisher.hasakafix.git.GitHelper;
 import com.cpunisher.hasakafix.utils.IdentityPair;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -65,5 +66,13 @@ public class GitHelperTest {
         assertEquals("Worker.java", newFile.filepath());
         assertEquals(OLD_WORKER_DOT_JAVA, oldFile.content());
         assertEquals(NEW_WORKER_DOT_JAVA, newFile.content());
+    }
+
+    @Test
+    public void testChangedLines() {
+        RevCommit commit = gitHelper.getCommits().iterator().next();
+        List<GitDiffFileRecord> list = gitHelper.getEditFiles(commit);
+        assertEquals(1, list.get(0).changedLineCountA());
+        assertEquals(4, list.get(0).changedLineCountB());
     }
 }

@@ -13,8 +13,12 @@ public record GitDiffFileRecord(
         List<Edit> edits
 ) {
 
-    public int changedLineCount() {
+    public int changedLineCountA() {
         return edits.stream().map(Edit::getLengthA).reduce(0, Integer::sum);
+    }
+
+    public int changedLineCountB() {
+        return edits.stream().map(Edit::getLengthB).reduce(0, Integer::sum);
     }
 
     public IdentityPair<EditFile> toEditFiles(GitHelper gitHelper) {

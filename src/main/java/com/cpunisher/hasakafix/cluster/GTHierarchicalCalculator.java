@@ -94,6 +94,8 @@ public class GTHierarchicalCalculator implements IClusterCalculator<GTTreeEdit> 
             AntiUnificationMetrics rightMetrics = getAUMetrics(substitution.right());
             substitutionCost += leftMetrics.leftSize + rightMetrics.leftSize;
         }
+
+
         return (double) (substitutionCost - placeholder) / metrics.size;
     }
 
