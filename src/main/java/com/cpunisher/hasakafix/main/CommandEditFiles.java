@@ -52,6 +52,14 @@ public class CommandEditFiles implements Runnable {
         return test && source;
     }
 
+    private boolean commitChangedLineLimitPredicate(List<GitDiffFileRecord> records) {
+        int sum = records.stream()
+                .filter(record -> !isTest(record.before().filepath()) && !isTest(record.after().filepath()))
+                .map(record -> record.changedLineCountA() + record.changedLineCountB())
+                .reduce(0, Integer::sum);
+        return sum > 0 && sum <= 4;
+    }
+
     @Override
     public void run() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -65,8 +73,8 @@ public class CommandEditFiles implements Runnable {
                         .filter(this::commitMessagePredicate)
                         .map(gitHelper::getEditFiles)
                         .filter(this::commitContainTestPredicate)
+                        .filter(this::commitChangedLineLimitPredicate)
                         .flatMap(records -> records.stream()
-                                .filter(record -> record.changedLineCountA()  + record.changedLineCountB() <= 4)
                                 .filter(record -> !isTest(record.before().filepath()) && !isTest(record.after().filepath()))
                         )
                         .collect(Collectors.groupingBy(
