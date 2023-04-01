@@ -56,7 +56,13 @@ public class CommandCluster implements Runnable {
         }
 
         IClusterCalculator<GTTreeEdit> cc = new GTHierarchicalCalculator(new PlainAntiUnifier2());
-        Cluster<GTTreeEdit> rootCluster = cc.cluster(edits);
+        List<Cluster<GTTreeEdit>> clusters = cc.cluster(edits);
+        for (int i = 0; i < clusters.size(); i++) {
+            saveCluster(clusters.get(i), "cluster_" + i);
+        }
+    }
+
+    private void saveCluster(Cluster<GTTreeEdit> rootCluster, String identity) {
         SimpleNode rootNode = new SimpleNode("", new ArrayList<>());
 
         Queue<Pair<Cluster<GTTreeEdit>, SimpleNode>> queue = new LinkedList<>();
@@ -70,7 +76,7 @@ public class CommandCluster implements Runnable {
             node.id(uuid.toString());
 
             // Write file
-            Path dir = output.toPath().resolve(uuid.toString());
+            Path dir = output.toPath().resolve(identity).resolve(uuid.toString());
             try {
                 Files.createDirectories(dir);
                 Path before = dir.resolve("before.xml");
@@ -90,7 +96,7 @@ public class CommandCluster implements Runnable {
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         try {
-            Files.writeString(output.toPath().resolve("tree.json"), gson.toJson(rootNode));
+            Files.writeString(output.toPath().resolve(identity).resolve("tree.json"), gson.toJson(rootNode));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

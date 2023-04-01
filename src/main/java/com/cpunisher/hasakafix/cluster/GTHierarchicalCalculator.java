@@ -2,6 +2,7 @@ package com.cpunisher.hasakafix.cluster;
 
 import com.cpunisher.hasakafix.antiunification.GTPlainAntiUnifier;
 import com.cpunisher.hasakafix.antiunification.IAntiUnifier;
+import com.cpunisher.hasakafix.antiunification.PlainAntiUnifier2;
 import com.cpunisher.hasakafix.antiunification.bean.AntiUnifyData;
 import com.cpunisher.hasakafix.antiunification.bean.AntiUnifySubstitution;
 import com.cpunisher.hasakafix.bean.Cluster;
@@ -22,10 +23,11 @@ public class GTHierarchicalCalculator implements IClusterCalculator<GTTreeEdit> 
         this.antiUnifier = new GTPlainAntiUnifier(antiUnifier);
     }
 
-    public Cluster<GTTreeEdit> cluster(List<GTTreeEdit> edits) {
+    public List<Cluster<GTTreeEdit>> cluster(List<GTTreeEdit> edits) {
         if (edits.isEmpty()) {
             return null;
         }
+        List<Cluster<GTTreeEdit>> clusters = new LinkedList<>();
         List<Cluster<GTTreeEdit>> workList = new LinkedList<>(edits.stream().map(edit -> new Cluster<>(edit, Collections.emptyList())).toList());
         Stack<Cluster<GTTreeEdit>> stack = new Stack<>();
 
@@ -69,13 +71,17 @@ public class GTHierarchicalCalculator implements IClusterCalculator<GTTreeEdit> 
                 distanceMatrix.row(cluster2).clear();
                 distanceMatrix.column(cluster1).clear();
                 distanceMatrix.column(cluster2).clear();
-                workList.add(new Cluster<>(result, List.of(cluster1, cluster2)));
                 System.out.printf("[%d/%d] Cluster edit\n", ++finish, total);
+                if (Objects.equals(result.before().getLabel(), PlainAntiUnifier2.HOLE_LABEL) && Objects.equals(result.before().getType(), PlainAntiUnifier2.HOLE_TYPE)) {
+                    clusters.add(new Cluster<>(result, List.of(cluster1, cluster2)));
+                } else {
+                    workList.add(new Cluster<>(result, List.of(cluster1, cluster2)));
+                }
             } else {
                 stack.push(target);
             }
         }
-        return workList.get(0);
+        return clusters;
     }
 
     public CostResult cost(Cluster<GTTreeEdit> cluster1, Cluster<GTTreeEdit> cluster2) {
