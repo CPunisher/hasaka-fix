@@ -66,7 +66,10 @@ public class GTHierarchicalCalculatorTest {
     @Test
     public void testCluster() {
         IClusterCalculator<GTTreeEdit> cc = new GTHierarchicalCalculator(new PlainAntiUnifier2());
-        Cluster<GTTreeEdit> cluster = cc.cluster(edits);
+        List<Cluster<GTTreeEdit>> clusterList = cc.cluster(edits);
+        Assertions.assertEquals(1, clusterList.size());
+
+        Cluster<GTTreeEdit> cluster = clusterList.get(0);
         Assertions.assertTrue(cluster.children().stream().anyMatch(c -> c.pattern().equals(edits.get(3))));
         Assertions.assertTrue(getWithChildren(cluster).children().stream().anyMatch(c -> c.pattern().equals(edits.get(2))));
         Assertions.assertTrue(getWithChildren(getWithChildren(cluster)).children().stream().anyMatch(c -> c.pattern().equals(edits.get(1))));
