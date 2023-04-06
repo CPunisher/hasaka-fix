@@ -22,7 +22,7 @@ public class ClusterManagerTest {
 
     @BeforeAll
     public void init() {
-        manager.initClusters(Arrays.asList(new File("./output/cluster").listFiles()));
+        manager.initClusters(Arrays.asList(new File("./output/clusters").listFiles()));
     }
 
     @Test
@@ -38,7 +38,10 @@ public class ClusterManagerTest {
         List<Cluster<GTTreeEdit>> result = manager.ranking(methodInvocation);
         for (var cluster : result) {
             System.out.println("---------------------------------------");
+            System.out.println("----------------Before-----------------");
             System.out.println(cluster.pattern().before().toTreeString());
+            System.out.println("-----------------After------------------");
+            System.out.println(cluster.pattern().after().toTreeString());
         }
     }
 }

@@ -3,6 +3,8 @@
 **/out/
 **/output/
 !src/**/build/
+dataset/**
+!dataset/datasets.txt
 
 # Ignore Gradle GUI config
 gradle-app.setting

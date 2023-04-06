@@ -73,11 +73,11 @@ public class GTHierarchicalCalculator implements IClusterCalculator<GTTreeEdit> 
                 distanceMatrix.column(cluster2).clear();
                 if (Objects.equals(result.before().getLabel(), PlainAntiUnifier2.HOLE_LABEL) && Objects.equals(result.before().getType(), PlainAntiUnifier2.HOLE_TYPE)) {
                     clusters.add(new Cluster<>(result, List.of(cluster1, cluster2)));
-                    System.out.printf("[%d/%d] Cluster edit\n", ++finish, total);
-                } else {
-                    workList.add(new Cluster<>(result, List.of(cluster1, cluster2)));
                     finish += 2;
                     System.out.printf("[%d/%d] Cluster edit\n", finish, total);
+                } else {
+                    workList.add(new Cluster<>(result, List.of(cluster1, cluster2)));
+                    System.out.printf("[%d/%d] Cluster edit\n", ++finish, total);
                 }
             } else {
                 stack.push(target);
