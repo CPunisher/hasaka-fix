@@ -3,6 +3,7 @@ package com.cpunisher.hasakafix;
 import com.cpunisher.hasakafix.antiunification.GTPlainAntiUnifier;
 import com.cpunisher.hasakafix.antiunification.PlainAntiUnifier2;
 import com.cpunisher.hasakafix.bean.Cluster;
+import com.cpunisher.hasakafix.cluster.GTCostCalculator;
 import com.cpunisher.hasakafix.cluster.GTHierarchicalCalculator;
 import com.cpunisher.hasakafix.cluster.IClusterCalculator;
 import com.cpunisher.hasakafix.edit.editor.IEditor;
@@ -50,16 +51,17 @@ public class GTHierarchicalCalculatorTest {
         Cluster<GTTreeEdit> cluster3 = new Cluster<>(edits.get(2), Collections.emptyList());
         Cluster<GTTreeEdit> cluster4 = new Cluster<>(edits.get(3), Collections.emptyList());
 
-        GTHierarchicalCalculator cc = new GTHierarchicalCalculator(new PlainAntiUnifier2());
+        GTPlainAntiUnifier antiUnifier = new GTPlainAntiUnifier(new PlainAntiUnifier2());
+        GTCostCalculator cc = new GTCostCalculator();
         // 1 and 2
-        var cost12 = cc.cost(cluster1, cluster2);
-        var cost13 = cc.cost(cluster1, cluster3);
-        var cost14 = cc.cost(cluster1, cluster4);
+        var cost12 = cc.cost(antiUnifier.antiUnify(cluster1.pattern(), cluster2.pattern()));
+        var cost13 = cc.cost(antiUnifier.antiUnify(cluster1.pattern(), cluster3.pattern()));
+        var cost14 = cc.cost(antiUnifier.antiUnify(cluster1.pattern(), cluster4.pattern()));
         Assertions.assertEquals(cost12.dist(), Math.min(cost12.dist(), Math.min(cost13.dist(), cost14.dist())));
         // 3
         Cluster<GTTreeEdit> cluster12 = new Cluster<>(cost12.pattern(), List.of(cluster1, cluster2));
-        var cost123 = cc.cost(cluster12, cluster3);
-        var cost124 = cc.cost(cluster12, cluster4);
+        var cost123 = cc.cost(antiUnifier.antiUnify(cluster12.pattern(), cluster3.pattern()));
+        var cost124 = cc.cost(antiUnifier.antiUnify(cluster12.pattern(), cluster4.pattern()));
         Assertions.assertEquals(cost123.dist(), Math.min(cost123.dist(), cost124.dist()));
     }
 

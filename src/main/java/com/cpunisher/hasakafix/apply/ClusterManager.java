@@ -102,7 +102,7 @@ public class ClusterManager implements ITreeMatcher {
 
     public boolean match(Tree pattern, Tree tree) {
         if (!pattern.hasSameTypeAndLabel(tree)) {
-            if (!Objects.equals(pattern.getLabel(), PlainAntiUnifier2.HOLE_LABEL)) {
+            if (!pattern.getLabel().startsWith(PlainAntiUnifier2.HOLE_LABEL)) {
                 return false;
             }
             // replace

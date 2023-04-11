@@ -3,12 +3,9 @@ package com.cpunisher.hasakafix.cluster;
 import com.cpunisher.hasakafix.antiunification.GTPlainAntiUnifier;
 import com.cpunisher.hasakafix.antiunification.IAntiUnifier;
 import com.cpunisher.hasakafix.antiunification.PlainAntiUnifier2;
-import com.cpunisher.hasakafix.antiunification.bean.AntiUnifyData;
-import com.cpunisher.hasakafix.antiunification.bean.AntiUnifySubstitution;
 import com.cpunisher.hasakafix.bean.Cluster;
 import com.cpunisher.hasakafix.edit.editor.gumtree.GTTreeEdit;
 import com.github.gumtreediff.tree.Tree;
-import com.github.gumtreediff.tree.TreeVisitor;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
@@ -16,11 +13,12 @@ import java.util.*;
 
 public class GTHierarchicalCalculator implements IClusterCalculator<GTTreeEdit> {
     private final GTPlainAntiUnifier antiUnifier;
-//    private final Map<Cluster<GTTreeEdit>, Map<Cluster<GTTreeEdit>, CostResult>> distanceMatrix = new HashMap<>();
+    private final GTCostCalculator costCalculator;
     private final Table<Cluster<GTTreeEdit>, Cluster<GTTreeEdit>, CostResult> distanceMatrix = HashBasedTable.create();
 
     public GTHierarchicalCalculator(IAntiUnifier<Tree> antiUnifier) {
         this.antiUnifier = new GTPlainAntiUnifier(antiUnifier);
+        this.costCalculator = new GTCostCalculator();
     }
 
     public List<Cluster<GTTreeEdit>> cluster(List<GTTreeEdit> edits) {
@@ -50,13 +48,13 @@ public class GTHierarchicalCalculator implements IClusterCalculator<GTTreeEdit> 
 
                 CostResult cost = distanceMatrix.get(peek, cluster);
                 if (cost == null) {
-                    cost = cost(peek, cluster);
+                    cost = costCalculator.cost(antiUnifier.antiUnify(peek.pattern(), cluster.pattern()));
                     distanceMatrix.put(peek, cluster, cost);
                     distanceMatrix.put(cluster, peek, cost);
                 }
-                if (cost.dist < minDist) {
-                    result = cost.pattern;
-                    minDist = cost.dist;
+                if (cost.dist() < minDist) {
+                    result = cost.pattern();
+                    minDist = cost.dist();
                     minIndex = i;
                 }
             }
@@ -71,7 +69,7 @@ public class GTHierarchicalCalculator implements IClusterCalculator<GTTreeEdit> 
                 distanceMatrix.row(cluster2).clear();
                 distanceMatrix.column(cluster1).clear();
                 distanceMatrix.column(cluster2).clear();
-                if (Objects.equals(result.before().getLabel(), PlainAntiUnifier2.HOLE_LABEL) && Objects.equals(result.before().getType(), PlainAntiUnifier2.HOLE_TYPE)) {
+                if (result.before().getLabel().startsWith(PlainAntiUnifier2.HOLE_LABEL) && Objects.equals(result.before().getType(), PlainAntiUnifier2.HOLE_TYPE)) {
                     clusters.add(new Cluster<>(result, List.of(cluster1, cluster2)));
                     finish += 2;
                     System.out.printf("[%d/%d] Cluster edit\n", finish, total);
@@ -87,57 +85,4 @@ public class GTHierarchicalCalculator implements IClusterCalculator<GTTreeEdit> 
         return clusters;
     }
 
-    public CostResult cost(Cluster<GTTreeEdit> cluster1, Cluster<GTTreeEdit> cluster2) {
-        GTPlainAntiUnifier.GTAntiUnifierData result = antiUnifier.antiUnify(cluster1.pattern(), cluster2.pattern());
-        AntiUnifyData<Tree> beforeResult = new AntiUnifyData<>(result.template().before(), result.beforeSubs());
-        AntiUnifyData<Tree> afterResult = new AntiUnifyData<>(result.template().after(), result.afterSubs());
-        return new CostResult(result.template(), metrics(beforeResult) + metrics(afterResult));
-    }
-
-    private double metrics(AntiUnifyData<Tree> result) {
-        AntiUnificationMetrics metrics = getAUMetrics(result.template());
-        int placeholder = result.substitutions().size();
-        int substitutionCost = 0;
-        for (AntiUnifySubstitution<Tree> substitution : result.substitutions()) {
-            AntiUnificationMetrics leftMetrics = getAUMetrics(substitution.left());
-            AntiUnificationMetrics rightMetrics = getAUMetrics(substitution.right());
-            substitutionCost += leftMetrics.leftSize + rightMetrics.leftSize;
-        }
-
-
-        return (double) (substitutionCost - placeholder) / metrics.size;
-    }
-
-    private static final String KEY_AU_METRICS = "AUMetrics";
-    private static AntiUnificationMetrics getAUMetrics(Tree tree) {
-        AntiUnificationMetrics metrics = (AntiUnificationMetrics) tree.getMetadata(KEY_AU_METRICS);
-        if (metrics == null) {
-            TreeVisitor.visitTree(tree, new AntiUnificationMetricsComputer());
-            metrics = (AntiUnificationMetrics) tree.getMetadata(KEY_AU_METRICS);
-        }
-        return metrics;
-    }
-
-    public record CostResult(GTTreeEdit pattern, double dist) {}
-
-    private record AntiUnificationMetrics(int size, int leftSize) {}
-
-    private static class AntiUnificationMetricsComputer extends TreeVisitor.InnerNodesAndLeavesVisitor {
-        @Override
-        public void visitLeaf(Tree tree) {
-            tree.setMetadata(KEY_AU_METRICS, new AntiUnificationMetrics(1, 1));
-        }
-
-        @Override
-        public void endInnerNode(Tree tree) {
-            int sumSize = 0;
-            int sumLeftSize = 0;
-            for (Tree child : tree.getChildren()) {
-                AntiUnificationMetrics metrics = getAUMetrics(child);
-                sumSize += metrics.size;
-                sumLeftSize += metrics.leftSize;
-            }
-            tree.setMetadata(KEY_AU_METRICS, new AntiUnificationMetrics(sumSize + 1, sumLeftSize + 1));
-        }
-    }
 }

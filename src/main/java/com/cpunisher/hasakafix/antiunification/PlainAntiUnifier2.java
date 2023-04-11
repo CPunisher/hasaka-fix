@@ -14,7 +14,7 @@ import java.util.Objects;
 public class PlainAntiUnifier2 implements IAntiUnifier<Tree> {
 
     public static final Type HOLE_TYPE = TypeSet.type("?");
-    public static final String HOLE_LABEL = "#HOLE#";
+    public static final String HOLE_LABEL = "#HOLE";
 
     @Override
     public List<AntiUnifyData<Tree>> antiUnify(Tree left, Tree right) {
@@ -23,7 +23,7 @@ public class PlainAntiUnifier2 implements IAntiUnifier<Tree> {
 
     private AntiUnifyData<Tree> _antiUnify(Tree left, Tree right) {
         // One of theme is a hole
-        if (Objects.equals(left.getLabel(), HOLE_LABEL) || Objects.equals(right.getLabel(), HOLE_LABEL)) {
+        if (left.getLabel().startsWith(HOLE_LABEL) || right.getLabel().startsWith(HOLE_LABEL)) {
             Tree sub;
             if (left.hasSameType(right)) {
                 sub = new DefaultTree(left.getType(), HOLE_LABEL);
