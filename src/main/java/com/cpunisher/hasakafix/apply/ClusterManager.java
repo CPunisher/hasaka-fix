@@ -9,6 +9,7 @@ import com.github.gumtreediff.matchers.Matcher;
 import com.github.gumtreediff.tree.Tree;
 import com.google.gson.Gson;
 
+import javax.swing.text.html.Option;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -83,7 +84,7 @@ public class ClusterManager implements ITreeMatcher {
         int total = 0;
         for (var concrete : concretes) {
             for (var tree : concrete.pattern().before().preOrder()) {
-                if (match(cluster.pattern().before(), tree)) {
+                if (match(cluster.pattern().before(), tree).isPresent()) {
                     total++;
                 }
             }
@@ -100,25 +101,31 @@ public class ClusterManager implements ITreeMatcher {
         rankingMap.put(cluster, prevalence * specialized);
     }
 
-    public boolean match(Tree pattern, Tree tree) {
+    public Optional<Map<String, Tree>> match(Tree pattern, Tree tree) {
+        Map<String, Tree> mappings = new HashMap<>();
         if (!pattern.hasSameTypeAndLabel(tree)) {
             if (!pattern.getLabel().startsWith(PlainAntiUnifier2.HOLE_LABEL)) {
-                return false;
+                return Optional.empty();
             }
             // replace
-            return Objects.equals(pattern.getType(), PlainAntiUnifier2.HOLE_TYPE) || pattern.hasSameType(tree);
+            if (Objects.equals(pattern.getType(), PlainAntiUnifier2.HOLE_TYPE) || pattern.hasSameType(tree)) {
+                mappings.put(pattern.getLabel(), tree);
+            }
+            return Optional.of(mappings);
         }
 
         if (pattern.getChildren().size() != tree.getChildren().size()) {
-            return false;
+            return Optional.empty();
         }
 
         for (int i = 0; i < pattern.getChildren().size(); i++) {
-            if (!match(pattern.getChild(i), tree.getChild(i))) {
-                return false;
+            var result = match(pattern.getChild(i), tree.getChild(i));
+            if (result.isEmpty()) {
+                return Optional.empty();
             }
+            mappings.putAll(result.get());
         }
-        return true;
+        return Optional.of(mappings);
     }
 
     public void initClusters(List<File> patterns) {
@@ -146,18 +153,17 @@ public class ClusterManager implements ITreeMatcher {
         this.clusters = clusters;
     }
 
-    public List<Cluster<GTTreeEdit>> ranking(Tree tree) {
-        List<Cluster<GTTreeEdit>> result = new ArrayList<>();
+    public List<MatchResult> ranking(Tree tree) {
+        List<MatchResult> result = new ArrayList<>();
         for (var root : clusters) {
             root.preOrder(cluster -> {
-                if (match(cluster.pattern().before(), tree)) {
-                    result.add(cluster);
-                }
+                var matchResult = match(cluster.pattern().before(), tree);
+                matchResult.ifPresent(treeTreeMap -> result.add(new MatchResult(cluster, treeTreeMap)));
             });
         }
         result.sort((c1, c2) -> Double.compare(
-                rankingMap.get(c2),
-                rankingMap.get(c1)
+                rankingMap.get(c2.cluster()),
+                rankingMap.get(c1.cluster())
         ));
         return result;
     }

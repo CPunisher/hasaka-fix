@@ -1,0 +1,31 @@
+{
+  "id": "1234",
+  "children": [
+    {
+      "id": "123",
+      "children": [
+        {
+          "id": "12",
+          "children": [
+            {
+              "id": "1",
+              "children": []
+            },
+            {
+              "id": "2",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "3",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "children": []
+    }
+  ]
+}

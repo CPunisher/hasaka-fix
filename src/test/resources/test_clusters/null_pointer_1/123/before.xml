@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<root>
+    <context></context>
+    <tree type="Block" pos="0" length="0">
+        <tree type="ExpressionStatement" pos="0" length="0">
+            <tree type="MethodInvocation" pos="0" length="0">
+                <tree type="METHOD_INVOCATION_RECEIVER" pos="0" length="0">
+                    <tree type="SimpleName" label="#HOLE_0" pos="0" length="0"></tree>
+                </tree>
+                <tree type="SimpleName" label="#HOLE_1" pos="0" length="0"></tree>
+            </tree>
+        </tree>
+    </tree>
+</root>

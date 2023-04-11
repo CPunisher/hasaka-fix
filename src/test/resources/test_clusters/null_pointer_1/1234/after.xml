@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<root>
+    <context></context>
+    <tree type="Block" pos="0" length="0">
+        <tree type="IfStatement" pos="0" length="0">
+            <tree type="InfixExpression" pos="0" length="0">
+                <tree type="SimpleName" label="#HOLE_0" pos="0" length="0"></tree>
+                <tree type="INFIX_EXPRESSION_OPERATOR" label="==" pos="0" length="0"></tree>
+                <tree type="NullLiteral" pos="0" length="0"></tree>
+            </tree>
+            <tree type="ReturnStatement" pos="0" length="0"></tree>
+        </tree>
+    </tree>
+</root>

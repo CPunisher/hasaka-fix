@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<root>
+    <context></context>
+    <tree type="Block" pos="33" length="35">
+        <tree type="VariableDeclarationStatement" pos="43" length="19">
+            <tree type="PrimitiveType" label="int" pos="43" length="3"></tree>
+            <tree type="VariableDeclarationFragment" pos="47" length="14">
+                <tree type="SimpleName" label="x" pos="47" length="1"></tree>
+                <tree type="MethodInvocation" pos="51" length="10">
+                    <tree type="METHOD_INVOCATION_RECEIVER" pos="51" length="4">
+                        <tree type="SimpleName" label="list" pos="51" length="4"></tree>
+                    </tree>
+                    <tree type="SimpleName" label="get" pos="56" length="3"></tree>
+                </tree>
+            </tree>
+        </tree>
+    </tree>
+</root>

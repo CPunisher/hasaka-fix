@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<root>
+    <context></context>
+    <tree type="Block" pos="33" length="69">
+        <tree type="IfStatement" pos="43" length="34">
+            <tree type="InfixExpression" pos="47" length="9">
+                <tree type="SimpleName" label="t" pos="47" length="1"></tree>
+                <tree type="INFIX_EXPRESSION_OPERATOR" label="==" pos="49" length="2"></tree>
+                <tree type="NullLiteral" pos="52" length="4"></tree>
+            </tree>
+            <tree type="ReturnStatement" pos="70" length="7"></tree>
+        </tree>
+        <tree type="ExpressionStatement" pos="86" length="10">
+            <tree type="MethodInvocation" pos="86" length="9">
+                <tree type="METHOD_INVOCATION_RECEIVER" pos="86" length="1">
+                    <tree type="SimpleName" label="t" pos="86" length="1"></tree>
+                </tree>
+                <tree type="SimpleName" label="start" pos="88" length="5"></tree>
+            </tree>
+        </tree>
+    </tree>
+</root>

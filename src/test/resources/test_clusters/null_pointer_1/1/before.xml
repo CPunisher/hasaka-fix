@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<root>
+    <context></context>
+    <tree type="Block" pos="33" length="33">
+        <tree type="ExpressionStatement" pos="43" length="17">
+            <tree type="MethodInvocation" pos="43" length="16">
+                <tree type="METHOD_INVOCATION_RECEIVER" pos="43" length="7">
+                    <tree type="SimpleName" label="content" pos="43" length="7"></tree>
+                </tree>
+                <tree type="SimpleName" label="remove" pos="51" length="6"></tree>
+            </tree>
+        </tree>
+    </tree>
+</root>

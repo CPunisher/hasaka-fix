@@ -12,13 +12,17 @@ import com.cpunisher.hasakafix.edit.editor.gumtree.GTTreeEdit;
 import com.cpunisher.hasakafix.edit.parser.GTSourceParser;
 import com.cpunisher.hasakafix.edit.parser.ISourceParser;
 import com.cpunisher.hasakafix.repo.Getafix;
+import com.cpunisher.hasakafix.utils.XmlHelper;
+import com.github.gumtreediff.io.TreeIoUtils;
 import com.github.gumtreediff.tree.Tree;
 import com.github.gumtreediff.tree.TreeContext;
+import com.github.gumtreediff.tree.TreeUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -98,6 +102,9 @@ public class GTHierarchicalCalculatorTest {
             var target = antiUnifier.antiUnify(last.pattern(), current);
             last = new Cluster<>(target.template(), List.of(last, new Cluster<>(current, Collections.emptyList())));
             printCluster(last, 3 - workList.size());
+            // for test
+//            printXml(current.before());
+//            printXml(current.after());
         }
     }
 
@@ -108,6 +115,16 @@ public class GTHierarchicalCalculatorTest {
             }
         }
         return null;
+    }
+
+    private void printXml(Tree tree) {
+        try {
+            StringWriter stringWriter = new StringWriter();
+            TreeIoUtils.toXml(XmlHelper.toTreeContext(tree)).writeTo(stringWriter);
+            System.out.println(stringWriter);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void printCluster(Cluster<GTTreeEdit> cluster, int i) {

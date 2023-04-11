@@ -27,6 +27,7 @@ public class GTCostCalculator {
         if (substitutionCost == 0 && placeholder == 0 && metrics.size == 1 && result.template().getType() == TypeSet.type("Block")) {
             r += 1000;
         }
+
         return r;
     }
 
