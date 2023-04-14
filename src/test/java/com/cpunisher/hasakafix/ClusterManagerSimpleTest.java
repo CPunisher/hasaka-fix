@@ -1,6 +1,7 @@
 package com.cpunisher.hasakafix;
 
 import com.cpunisher.hasakafix.apply.ClusterManager;
+import com.cpunisher.hasakafix.apply.CodeGen;
 import com.github.gumtreediff.tree.DefaultTree;
 import com.github.gumtreediff.tree.Tree;
 import com.github.gumtreediff.matchers.Matcher;
@@ -11,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -31,7 +34,7 @@ public class ClusterManagerSimpleTest {
     }
 
     @Test
-    public void testTransform() {
+    public void testTransform() throws IOException {
         Tree block = new DefaultTree(TypeSet.type("Block"));
         Tree expression = new DefaultTree(TypeSet.type("ExpressionStatement"));
         Tree expr = new DefaultTree(TypeSet.type("MethodInvocation"));
@@ -45,8 +48,12 @@ public class ClusterManagerSimpleTest {
         block.addChild(expression);
 
         var resultList = clusterManager.ranking(block);
+        CodeGen codeGen = new CodeGen();
         for (var result : resultList) {
-            System.out.println(result.transformed().toTreeString());
+            StringWriter stringWriter = new StringWriter();
+            codeGen.write(block, stringWriter);
+            codeGen.write(result.transformed(), stringWriter);
+            System.out.println(stringWriter);
         }
     }
 }
