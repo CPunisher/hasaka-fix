@@ -6,7 +6,6 @@ import com.cpunisher.hasakafix.edit.editor.gumtree.GTTreeEdit;
 import com.cpunisher.hasakafix.utils.tree.SimpleNode;
 import com.github.gumtreediff.io.TreeIoUtils;
 import com.github.gumtreediff.matchers.Matcher;
-import com.github.gumtreediff.tree.DefaultTree;
 import com.github.gumtreediff.tree.Tree;
 import com.google.gson.Gson;
 
@@ -105,7 +104,8 @@ public class ClusterManager implements ITreeMatcher {
     public Optional<Map<String, Tree>> match(Tree pattern, Tree tree) {
         Map<String, Tree> mappings = new HashMap<>();
         if (!pattern.hasSameTypeAndLabel(tree)) {
-            if (!pattern.getLabel().startsWith(PlainAntiUnifier2.HOLE_LABEL)) {
+            if (!
+                    pattern.getLabel().startsWith(PlainAntiUnifier2.HOLE_LABEL)) {
                 return Optional.empty();
             }
             // replace
@@ -130,7 +130,7 @@ public class ClusterManager implements ITreeMatcher {
         return Optional.of(mappings);
     }
 
-    public void initClusters(List<File> patterns) {
+    public void initClusterFiles(List<File> patterns) {
         int total = patterns.size(), current = 1;
         System.out.println("Initializing clusters...");
         List<Cluster<GTTreeEdit>> clusters = new ArrayList<>();
@@ -146,6 +146,10 @@ public class ClusterManager implements ITreeMatcher {
                 throw new RuntimeException(e);
             }
         }
+        initClusters(clusters);
+    }
+
+    public void initClusters(List<Cluster<GTTreeEdit>> clusters) {
         System.out.println("Calculating cluster heights...");
         for (var cluster : clusters) calculateHeight(cluster);
         System.out.println("Calculating cluster subtree matches...");

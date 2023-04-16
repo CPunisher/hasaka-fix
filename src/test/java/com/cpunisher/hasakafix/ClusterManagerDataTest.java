@@ -23,7 +23,7 @@ public class ClusterManagerDataTest {
 
     @BeforeAll
     public void init() {
-        clusterManager.initClusters(Arrays.asList(new File("./output/clusters").listFiles()));
+        clusterManager.initClusterFiles(Arrays.asList(new File("./output/clusters").listFiles()));
     }
 
     @Test

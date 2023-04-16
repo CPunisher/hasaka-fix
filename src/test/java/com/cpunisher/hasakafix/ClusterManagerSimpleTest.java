@@ -13,7 +13,6 @@ import org.junit.jupiter.api.TestInstance;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -30,7 +29,7 @@ public class ClusterManagerSimpleTest {
                 .getClassLoader()
                 .getResource("test_clusters")
                 .toURI();
-        clusterManager.initClusters(Arrays.asList(new File(testClusters).listFiles()));
+        clusterManager.initClusterFiles(Arrays.asList(new File(testClusters).listFiles()));
     }
 
     @Test

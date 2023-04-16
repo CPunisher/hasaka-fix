@@ -19,7 +19,7 @@ public class CommandApply implements Runnable {
 
     @Override
     public void run() {
-        clusterManager.initClusters(this.patterns);
+        clusterManager.initClusterFiles(this.patterns);
         Scanner scanner = new Scanner(System.in);
         StringBuilder stringBuilder = new StringBuilder();
         while (scanner.hasNextLine()) {

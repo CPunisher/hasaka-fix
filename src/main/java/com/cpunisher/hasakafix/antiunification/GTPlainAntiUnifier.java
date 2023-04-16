@@ -3,6 +3,7 @@ package com.cpunisher.hasakafix.antiunification;
 import com.cpunisher.hasakafix.antiunification.bean.AntiUnifySubstitution;
 import com.cpunisher.hasakafix.cluster.GTCostCalculator;
 import com.cpunisher.hasakafix.edit.editor.gumtree.GTTreeEdit;
+import com.cpunisher.hasakafix.utils.tree.GTTreeUtils;
 import com.github.gumtreediff.actions.EditScript;
 import com.github.gumtreediff.actions.EditScriptGenerator;
 import com.github.gumtreediff.actions.SimplifiedChawatheScriptGenerator;
@@ -10,6 +11,7 @@ import com.github.gumtreediff.actions.model.Action;
 import com.github.gumtreediff.matchers.Matchers;
 import com.github.gumtreediff.tree.DefaultTree;
 import com.github.gumtreediff.tree.Tree;
+import com.github.gumtreediff.tree.TreeUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -181,7 +183,7 @@ public class GTPlainAntiUnifier {
         public boolean equals(Object obj) {
             if (obj == this) return true;
             if (obj instanceof SubstitutionPair target) {
-                return treeEquals(this.before, target.before) && treeEquals(this.after, target.after);
+                return GTTreeUtils.treeEquals(this.before, target.before) && GTTreeUtils.treeEquals(this.after, target.after);
             }
             return false;
         }
@@ -190,21 +192,5 @@ public class GTPlainAntiUnifier {
         public int hashCode() {
             return Objects.hash(before.getMetrics().hash, after.getMetrics().hash);
         }
-
-        public static boolean treeEquals(Tree tree1, Tree tree2) {
-            if (Objects.equals(tree1, tree2)) return true;
-
-            var children1 = tree1.getChildren();
-            var children2 = tree2.getChildren();
-            if (tree1.hasSameTypeAndLabel(tree2) && children1.size() == children2.size()) {
-                for (int i = 0; i < children1.size(); i++) {
-                    if (!treeEquals(children1.get(i), children2.get(i))) {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
     }
 }
