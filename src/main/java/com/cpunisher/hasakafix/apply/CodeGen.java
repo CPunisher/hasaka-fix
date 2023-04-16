@@ -3,6 +3,7 @@ package com.cpunisher.hasakafix.apply;
 import com.github.gumtreediff.tree.Tree;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
@@ -765,5 +766,12 @@ public class CodeGen {
                 writer.write("...");
                 break;
         }
+    }
+
+    public static String generate(Tree tree) throws IOException {
+        CodeGen codeGen = new CodeGen();
+        StringWriter writer = new StringWriter();
+        codeGen.write(tree, writer);
+        return writer.toString();
     }
 }

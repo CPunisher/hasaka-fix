@@ -6,20 +6,20 @@ import com.cpunisher.hasakafix.edit.editor.gumtree.GTTreeEdit;
 import com.cpunisher.hasakafix.utils.tree.SimpleNode;
 import com.github.gumtreediff.io.TreeIoUtils;
 import com.github.gumtreediff.matchers.Matcher;
+import com.github.gumtreediff.tree.DefaultTree;
 import com.github.gumtreediff.tree.Tree;
 import com.google.gson.Gson;
 
-import javax.swing.text.html.Option;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.function.Consumer;
 
 public class ClusterManager implements ITreeMatcher {
     private int hSize = 0, nodeSize = 0;
     private List<Cluster<GTTreeEdit>> clusters = new ArrayList<>();
+    private final Map<Cluster<GTTreeEdit>, String> idMap = new HashMap<>();
     private final List<Cluster<GTTreeEdit>> concretes = new ArrayList<>();
     private final Map<Cluster<GTTreeEdit>, Integer> heightMap = new HashMap<>();
     private final Map<Cluster<GTTreeEdit>, Integer> subtreeMatchMap = new HashMap<>();
@@ -52,6 +52,7 @@ public class ClusterManager implements ITreeMatcher {
         if (node.children().isEmpty()) {
             concretes.add(cluster);
         }
+        idMap.put(cluster, node.id());
         return cluster;
     }
 
@@ -110,8 +111,9 @@ public class ClusterManager implements ITreeMatcher {
             // replace
             if (Objects.equals(pattern.getType(), PlainAntiUnifier2.HOLE_TYPE) || pattern.hasSameType(tree)) {
                 mappings.put(pattern.getLabel(), tree);
+                return Optional.of(mappings);
             }
-            return Optional.of(mappings);
+            return Optional.empty();
         }
 
         if (pattern.getChildren().size() != tree.getChildren().size()) {
@@ -157,8 +159,38 @@ public class ClusterManager implements ITreeMatcher {
         List<MatchResult> result = new ArrayList<>();
         for (var root : clusters) {
             root.preOrder(cluster -> {
-                var matchResult = match(cluster.pattern().before(), tree);
-                matchResult.ifPresent(treeTreeMap -> result.add(new MatchResult(cluster, treeTreeMap)));
+                var clusterRoot = cluster.pattern().before();
+                if (clusterRoot.getLabel().startsWith(PlainAntiUnifier2.HOLE_LABEL) && clusterRoot.getType().equals(PlainAntiUnifier2.HOLE_TYPE)) {
+                    return;
+                }
+
+                Tree dup = tree.deepCopy();
+                Map<Tree, Tree> subs = new HashMap<>();
+                for (var ch : dup.preOrder()) {
+                    var matchResult = match(clusterRoot, ch);
+                    if (matchResult.isPresent()) {
+                        var mappings = matchResult.get();
+                        Tree after = MatchResult.transform(cluster.pattern().after(), mappings);
+                        subs.put(ch, after);
+                    }
+                }
+                if (!subs.isEmpty()) {
+                    if (subs.entrySet().size() == 1 && subs.containsKey(dup)) {
+                        // Root replacement
+                        dup = subs.get(dup);
+                    } else {
+                        for (var entry : subs.entrySet()) {
+                            var parent = entry.getKey().getParent();
+                            if (parent != null) {
+                                var index = parent.getChildren().indexOf(entry.getKey());
+                                parent.getChildren().set(index, entry.getValue());
+                                entry.getValue().setParent(parent);
+                                entry.getKey().setParent(null);
+                            }
+                        }
+                    }
+                    result.add(new MatchResult(cluster, dup));
+                }
             });
         }
         result.sort((c1, c2) -> Double.compare(

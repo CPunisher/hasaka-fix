@@ -2,6 +2,7 @@ package com.cpunisher.hasakafix.antiunification;
 
 import com.cpunisher.hasakafix.antiunification.bean.AntiUnifyData;
 import com.cpunisher.hasakafix.antiunification.bean.AntiUnifySubstitution;
+import com.cpunisher.hasakafix.cluster.GTCostCalculator;
 import com.github.gumtreediff.tree.DefaultTree;
 import com.github.gumtreediff.tree.Tree;
 import com.github.gumtreediff.tree.Type;
@@ -30,6 +31,7 @@ public class PlainAntiUnifier2 implements IAntiUnifier<Tree> {
             } else {
                 sub = new DefaultTree(HOLE_TYPE, HOLE_LABEL);
             }
+            sub.setMetadata(GTCostCalculator.KEY_AU_METRICS, new GTCostCalculator.AntiUnificationMetrics(1, (GTCostCalculator.getAUMetrics(left).leftSize() + GTCostCalculator.getAUMetrics(right).leftSize()) / 2));
             return new AntiUnifyData<>(sub, List.of(new AntiUnifySubstitution<>(sub, left, right)));
         }
 
@@ -45,9 +47,11 @@ public class PlainAntiUnifier2 implements IAntiUnifier<Tree> {
             return new AntiUnifyData<>(newTree, substitutions);
         } else if (left.hasSameType(right)) {
             Tree hole = new DefaultTree(left.getType(), HOLE_LABEL);
+            hole.setMetadata(GTCostCalculator.KEY_AU_METRICS, new GTCostCalculator.AntiUnificationMetrics(1, (GTCostCalculator.getAUMetrics(left).leftSize() + GTCostCalculator.getAUMetrics(right).leftSize()) / 2));
             return new AntiUnifyData<>(hole, List.of(new AntiUnifySubstitution<>(hole, left, right)));
         }
         Tree hole = new DefaultTree(HOLE_TYPE, HOLE_LABEL);
+        hole.setMetadata(GTCostCalculator.KEY_AU_METRICS, new GTCostCalculator.AntiUnificationMetrics(1, (GTCostCalculator.getAUMetrics(left).leftSize() + GTCostCalculator.getAUMetrics(right).leftSize()) / 2));
         return new AntiUnifyData<>(hole, List.of(new AntiUnifySubstitution<>(hole, left, right)));
     }
 }

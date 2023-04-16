@@ -8,7 +8,7 @@ import java.util.Set;
 public class GTTreeEdit {
     private final Tree before;
     private final Tree after;
-    private final MappingStore mappings;
+    private MappingStore mappings;
     private Set<Tree> modified = null;
 
     public GTTreeEdit(Tree before, Tree after, MappingStore mappings) {
@@ -28,6 +28,8 @@ public class GTTreeEdit {
     public MappingStore mappings() {
         return mappings;
     }
+
+    public void mappings(MappingStore mappings) { this.mappings = mappings; }
 
     public Set<Tree> modified() {
         return modified;

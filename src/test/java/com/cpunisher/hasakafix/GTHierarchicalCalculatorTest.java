@@ -5,7 +5,6 @@ import com.cpunisher.hasakafix.antiunification.PlainAntiUnifier2;
 import com.cpunisher.hasakafix.bean.Cluster;
 import com.cpunisher.hasakafix.cluster.GTCostCalculator;
 import com.cpunisher.hasakafix.cluster.GTHierarchicalCalculator;
-import com.cpunisher.hasakafix.cluster.IClusterCalculator;
 import com.cpunisher.hasakafix.edit.editor.IEditor;
 import com.cpunisher.hasakafix.edit.editor.gumtree.GTEditor;
 import com.cpunisher.hasakafix.edit.editor.gumtree.GTTreeEdit;
@@ -14,9 +13,9 @@ import com.cpunisher.hasakafix.edit.parser.ISourceParser;
 import com.cpunisher.hasakafix.repo.Getafix;
 import com.cpunisher.hasakafix.utils.XmlHelper;
 import com.github.gumtreediff.io.TreeIoUtils;
+import com.github.gumtreediff.tree.DefaultTree;
 import com.github.gumtreediff.tree.Tree;
-import com.github.gumtreediff.tree.TreeContext;
-import com.github.gumtreediff.tree.TreeUtils;
+import com.github.gumtreediff.tree.TypeSet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -71,7 +70,7 @@ public class GTHierarchicalCalculatorTest {
 
     @Test
     public void testCluster() {
-        IClusterCalculator<GTTreeEdit> cc = new GTHierarchicalCalculator(new PlainAntiUnifier2());
+        GTHierarchicalCalculator cc = new GTHierarchicalCalculator(new PlainAntiUnifier2());
         List<Cluster<GTTreeEdit>> clusterList = cc.cluster(edits);
         Assertions.assertEquals(1, clusterList.size());
 
@@ -106,6 +105,20 @@ public class GTHierarchicalCalculatorTest {
 //            printXml(current.before());
 //            printXml(current.after());
         }
+    }
+
+    @Test
+    public void testTestResult() {
+        GTHierarchicalCalculator calculator = new GTHierarchicalCalculator(new PlainAntiUnifier2());
+        Tree before = new DefaultTree(TypeSet.type("MethodInvocation"));
+        Tree receiver = new DefaultTree(TypeSet.type("METHOD_INVOCATION_RECEIVER"));
+        Tree hole1 = new DefaultTree(TypeSet.type("?"), "#HOLE_1");
+        Tree hole2 = new DefaultTree(TypeSet.type("?"), "#HOLE_2");
+        receiver.addChild(hole1);
+        before.addChild(receiver);
+        before.addChild(hole2);
+        Tree after = new DefaultTree(TypeSet.type("MethodInvocation"), "#HOLE_0");
+        Assertions.assertFalse(calculator.testResult(new GTTreeEdit(before, after, null)));
     }
 
     private Cluster<GTTreeEdit> getWithChildren(Cluster<GTTreeEdit> cluster) {

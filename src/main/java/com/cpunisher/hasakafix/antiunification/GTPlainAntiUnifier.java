@@ -83,6 +83,7 @@ public class GTPlainAntiUnifier {
 
         return new GTAntiUnifierData(
                 new GTTreeEdit(before, after, Matchers.getInstance().getMatcher().match(before, after)),
+//                new GTTreeEdit(before, after, null),
                 groupSubstitution(List.of(beforeData.substitutions(), substitutionList)).stream().map(list -> list.get(0)).toList(),
                 groupSubstitution(List.of(afterData.substitutions(), substitutionList)).stream().map(list -> list.get(0)).toList()
         );

@@ -8,19 +8,15 @@ import com.github.gumtreediff.tree.Tree;
 
 import java.util.Map;
 
-public record MatchResult(Cluster<GTTreeEdit> cluster, Map<String, Tree> mappings) {
-    public Tree transformed() {
-        return transform(cluster.pattern().after());
-    }
-
-    private Tree transform(Tree template) {
+public record MatchResult(Cluster<GTTreeEdit> cluster, Tree after) {
+    public static Tree transform(Tree template, Map<String, Tree> mappings) {
         if (template.getLabel().startsWith(PlainAntiUnifier2.HOLE_LABEL)) {
             return mappings.get(template.getLabel());
         }
 
         Tree parent = new DefaultTree(template.getType(), template.getLabel());
         for (var child : template.getChildren()) {
-            parent.addChild(transform(child));
+            parent.addChild(transform(child, mappings));
         }
         return parent;
     }

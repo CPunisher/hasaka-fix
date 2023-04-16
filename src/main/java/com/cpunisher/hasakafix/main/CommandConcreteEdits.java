@@ -57,6 +57,7 @@ public class CommandConcreteEdits implements Runnable {
                 Tree after = parser.parse(pair.second.content());
                 Set<IdentityPair<TreeIoUtils.TreeSerializer>> edits = editor.getEdits(before, after)
                         .stream()
+                        .filter(edit -> edit.before().getMetrics().size < 100)
                         .map(edit -> new IdentityPair<>(
                                 TreeIoUtils.toXml(XmlHelper.toTreeContext(edit.before())),
                                 TreeIoUtils.toXml(XmlHelper.toTreeContext(edit.after()))

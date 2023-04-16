@@ -1,0 +1,10 @@
+java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group1/* -o ./output/ce/group1
+java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group2/* -o ./output/ce/group2
+java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group3/* -o ./output/ce/group3
+java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group4/* -o ./output/ce/group4
+java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group5/* -o ./output/ce/group5
+java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group6/* -o ./output/ce/group6
+java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group7/* -o ./output/ce/group7
+java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group8/* -o ./output/ce/group8
+java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group9/* -o ./output/ce/group9
+java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group10/* -o ./output/ce/group10

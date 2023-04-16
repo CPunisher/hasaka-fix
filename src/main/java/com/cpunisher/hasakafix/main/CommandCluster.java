@@ -3,7 +3,6 @@ package com.cpunisher.hasakafix.main;
 import com.cpunisher.hasakafix.antiunification.PlainAntiUnifier2;
 import com.cpunisher.hasakafix.bean.Cluster;
 import com.cpunisher.hasakafix.cluster.GTHierarchicalCalculator;
-import com.cpunisher.hasakafix.cluster.IClusterCalculator;
 import com.cpunisher.hasakafix.edit.editor.gumtree.GTTreeEdit;
 import com.cpunisher.hasakafix.utils.XmlHelper;
 import com.cpunisher.hasakafix.utils.tree.SimpleNode;
@@ -21,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @CommandLine.Command(name = "cluster", description = "Cluster concrete edits to get fix pattern")
 public class CommandCluster implements Runnable {
@@ -48,6 +48,7 @@ public class CommandCluster implements Runnable {
                     Tree afterTree = TreeIoUtils.fromXml().generateFrom().file(after).getRoot();
                     var mapping = matcher.match(beforeTree, afterTree);
                     edits.add(new GTTreeEdit(beforeTree, afterTree, mapping));
+//                    edits.add(new GTTreeEdit(beforeTree, afterTree, null));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -55,11 +56,9 @@ public class CommandCluster implements Runnable {
             System.out.printf("[%d/%d] Finish file %s\n", ++finish, total, dir.getName());
         }
 
-        IClusterCalculator<GTTreeEdit> cc = new GTHierarchicalCalculator(new PlainAntiUnifier2());
-        List<Cluster<GTTreeEdit>> clusters = cc.cluster(edits);
-        for (int i = 0; i < clusters.size(); i++) {
-            saveCluster(clusters.get(i), "cluster_" + i);
-        }
+        AtomicInteger count = new AtomicInteger(1);
+        GTHierarchicalCalculator cc = new GTHierarchicalCalculator(new PlainAntiUnifier2());
+        cc.cluster(edits, cluster -> saveCluster(cluster, "cluster_" + count.getAndIncrement()));
     }
 
     private void saveCluster(Cluster<GTTreeEdit> rootCluster, String identity) {

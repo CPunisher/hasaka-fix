@@ -47,13 +47,19 @@ public class ClusterManagerSimpleTest {
         expression.addChild(expr);
         block.addChild(expression);
 
-        var resultList = clusterManager.ranking(block);
-        CodeGen codeGen = new CodeGen();
-        for (var result : resultList) {
-            StringWriter stringWriter = new StringWriter();
-            codeGen.write(block, stringWriter);
-            codeGen.write(result.transformed(), stringWriter);
-            System.out.println(stringWriter);
+        find(block);
+    }
+
+    private void find(Tree tree) throws IOException {
+        var rankingList = clusterManager.ranking(tree);
+        for (int i = 0; i < rankingList.size(); i++) {
+            var matchResult = rankingList.get(i);
+            System.out.println("------------------ Before " + i + " ------------------------");
+            System.out.println(rankingList.get(i).cluster().pattern().before().toTreeString());
+            System.out.println(CodeGen.generate(tree));
+            System.out.println("------------------ After " + i + " ------------------------");
+            System.out.println(rankingList.get(i).cluster().pattern().after().toTreeString());
+            System.out.println(CodeGen.generate(matchResult.after()));
         }
     }
 }

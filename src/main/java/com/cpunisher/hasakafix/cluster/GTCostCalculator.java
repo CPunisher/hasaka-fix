@@ -1,6 +1,7 @@
 package com.cpunisher.hasakafix.cluster;
 
 import com.cpunisher.hasakafix.antiunification.GTPlainAntiUnifier;
+import com.cpunisher.hasakafix.antiunification.PlainAntiUnifier2;
 import com.cpunisher.hasakafix.antiunification.bean.AntiUnifyData;
 import com.cpunisher.hasakafix.antiunification.bean.AntiUnifySubstitution;
 import com.github.gumtreediff.tree.Tree;
@@ -23,7 +24,7 @@ public class GTCostCalculator {
             AntiUnificationMetrics rightMetrics = getAUMetrics(substitution.right());
             substitutionCost += leftMetrics.leftSize + rightMetrics.leftSize;
         }
-        double r = (double) (substitutionCost - placeholder) / metrics.size;
+        double r = (double) (substitutionCost + placeholder) / metrics.size;
         if (substitutionCost == 0 && placeholder == 0 && metrics.size == 1 && result.template().getType() == TypeSet.type("Block")) {
             r += 1000;
         }
@@ -31,8 +32,8 @@ public class GTCostCalculator {
         return r;
     }
 
-    private static final String KEY_AU_METRICS = "AUMetrics";
-    private static AntiUnificationMetrics getAUMetrics(Tree tree) {
+    public static final String KEY_AU_METRICS = "AUMetrics";
+    public static AntiUnificationMetrics getAUMetrics(Tree tree) {
         AntiUnificationMetrics metrics = (AntiUnificationMetrics) tree.getMetadata(KEY_AU_METRICS);
         if (metrics == null) {
             TreeVisitor.visitTree(tree, new AntiUnificationMetricsComputer());
@@ -41,8 +42,7 @@ public class GTCostCalculator {
         return metrics;
     }
 
-
-    private record AntiUnificationMetrics(int size, int leftSize) {}
+    public record AntiUnificationMetrics(int size, int leftSize) {}
 
     private static class AntiUnificationMetricsComputer extends TreeVisitor.InnerNodesAndLeavesVisitor {
         @Override
@@ -59,7 +59,7 @@ public class GTCostCalculator {
                 sumSize += metrics.size;
                 sumLeftSize += metrics.leftSize;
             }
-            tree.setMetadata(KEY_AU_METRICS, new AntiUnificationMetrics(sumSize + 1, sumLeftSize + 1));
+            tree.setMetadata(KEY_AU_METRICS, new AntiUnificationMetrics(sumSize + 1, sumLeftSize));
         }
     }
 }
