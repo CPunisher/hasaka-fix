@@ -10,6 +10,8 @@ import com.cpunisher.hasakafix.utils.tree.GTTreeUtils;
 import com.github.gumtreediff.matchers.Matchers;
 import com.github.gumtreediff.tree.Tree;
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import picocli.CommandLine;
 
 import java.io.File;
@@ -188,13 +190,8 @@ public class CommandBench implements Runnable {
 
         @Override
         public String toString() {
-            return "BenchResult{" +
-                    "examples=" + examples +
-                    ", trainingTime=" + trainingTime +
-                    ", predictionTime=" + predictionTime +
-                    ", singlePrediction=" + singlePrediction +
-                    ", topAccuracy=" + topAccuracy +
-                    '}';
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            return gson.toJson(this);
         }
     }
 }
