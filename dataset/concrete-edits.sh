@@ -8,3 +8,13 @@ java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/gr
 java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group8/* -o ./output/ce/group8
 java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group9/* -o ./output/ce/group9
 java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group10/* -o ./output/ce/group10
+java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group11/* -o ./output/ce/group11
+java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group12/* -o ./output/ce/group12
+java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group13/* -o ./output/ce/group13
+java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group14/* -o ./output/ce/group14
+java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group15/* -o ./output/ce/group15
+java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group16/* -o ./output/ce/group16
+java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group17/* -o ./output/ce/group17
+java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group18/* -o ./output/ce/group18
+java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group19/* -o ./output/ce/group19
+java -jar build/libs/hasaka-fix-1.0-SNAPSHOT.jar concrete-edits ./output/edit/group20/* -o ./output/ce/group20
